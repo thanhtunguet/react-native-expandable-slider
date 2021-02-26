@@ -1,5 +1,5 @@
-export default {
-  multiply(a: number, b: number) {
-    return Promise.resolve(a * b);
-  },
-};
+import ExpandableSlider from './ExpandableSlider';
+
+export type { ExpandableSliderProps } from './ExpandableSlider';
+
+export default ExpandableSlider;

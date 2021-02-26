@@ -50,6 +50,8 @@
             ReferencedContainer = "container:ExpandableSliderExample.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <Testables>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
