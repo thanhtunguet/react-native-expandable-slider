@@ -1,26 +1,12 @@
 {
   "name": "react-native-expandable-slider",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Expandable slider for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
-  "files": [
-    "src",
-    "lib",
-    "android",
-    "ios",
-    "cpp",
-    "react-native-expandable-slider.podspec",
-    "!lib/typescript/example",
-    "!android/build",
-    "!ios/build",
-    "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__"
-  ],
   "scripts": {
     "test": "jest",
     "typescript": "tsc --noEmit",

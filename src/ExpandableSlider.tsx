@@ -1,45 +1,41 @@
-import React, {
-  FC,
-  MutableRefObject,
-  PropsWithChildren,
-  ReactElement,
-  Reducer,
-} from 'react';
-import {
+import PropTypes from 'prop-types';
+import type { FC, MutableRefObject, ReactElement, Reducer } from 'react';
+import React from 'react';
+import type {
   GestureResponderEvent,
   LayoutChangeEvent,
-  PanResponder,
   PanResponderInstance,
-  StyleSheet,
   ViewProps,
 } from 'react-native';
-import PropTypes from 'prop-types';
+import { PanResponder, StyleSheet } from 'react-native';
+import Animated, {
+  Easing,
+  spring,
+  sub,
+  timing,
+  useValue,
+  Value,
+} from 'react-native-reanimated';
+import { styles } from 'src/ExpandableSlider.styles';
+import type { ExpandableSliderProps } from 'src/ExpandableSliderProps';
+import { triggerHapticFeedback } from 'src/helpers/trigger-haptic-feedback';
 import type {
   LayoutReducerAction,
   LayoutReducerState,
-} from './reducers/layout-reducer';
+} from 'src/reducers/layout-reducer';
 import {
   layoutReducer,
   LayoutReducerActionType,
-} from './reducers/layout-reducer';
-import { triggerHapticFeedback } from './helpers/trigger-haptic-feedback';
-import Animated, {
-  spring,
-  useValue,
-  Value,
-  sub,
-  timing,
-  Easing,
-} from 'react-native-reanimated';
+} from 'src/reducers/layout-reducer';
 
 /**
  * File: ExpandableSlider.tsx
  * @created 2021-02-25 17:22:17
  * @author Thanh Tùng <ht@thanhtunguet.info>
- * @type {FC<PropsWithChildren<ExpandableSliderProps>>}
+ * @type {FC<ExpandableSliderProps>}
  */
-const ExpandableSlider: FC<PropsWithChildren<ExpandableSliderProps>> = (
-  props: PropsWithChildren<ExpandableSliderProps>
+const ExpandableSlider: FC<ExpandableSliderProps> = (
+  props: ExpandableSliderProps
 ): ReactElement => {
   const {
     style,
@@ -48,9 +44,9 @@ const ExpandableSlider: FC<PropsWithChildren<ExpandableSliderProps>> = (
     max,
     value,
     useHapticResponse,
+    heightRef,
     onSlide,
     onSlideCompleted,
-    heightRef,
   } = props;
 
   if (value < min || value > max) {
@@ -62,6 +58,14 @@ const ExpandableSlider: FC<PropsWithChildren<ExpandableSliderProps>> = (
   const borderRadius: number = React.useMemo(() => indicatorSize / 2, [
     indicatorSize,
   ]);
+
+  const handleCalculatePercentage = React.useCallback(
+    (v: number) => {
+      const current: number = v - min;
+      return (current / sliderRange) * 100;
+    },
+    [min, sliderRange]
+  );
 
   const [{ width: layoutWidth, x: layoutX }, dispatch] = React.useReducer<
     Reducer<LayoutReducerState, LayoutReducerAction>
@@ -152,18 +156,21 @@ const ExpandableSlider: FC<PropsWithChildren<ExpandableSliderProps>> = (
 
       handleSetAnimatedValue(locationX);
 
+      const percentage: number = handleCalculatePercentage(newValue);
+
       if (isCompleted) {
         if (typeof onSlideCompleted === 'function') {
-          onSlideCompleted(newValue);
+          onSlideCompleted(newValue, percentage);
         }
       }
 
       if (typeof onSlide === 'function') {
-        onSlide(newValue);
+        onSlide(newValue, percentage);
       }
     },
     [
       borderRadius,
+      handleCalculatePercentage,
       handleSetAnimatedValue,
       min,
       onSlide,
@@ -236,26 +243,6 @@ const ExpandableSlider: FC<PropsWithChildren<ExpandableSliderProps>> = (
   );
 };
 
-export interface ExpandableSliderProps {
-  indicatorSize?: number;
-
-  min?: number;
-
-  max?: number;
-
-  value?: number;
-
-  onSlide?(value: number): any;
-
-  onSlideCompleted?(value: number): any;
-
-  style?: ViewProps['style'];
-
-  useHapticResponse?: boolean;
-
-  heightRef?: MutableRefObject<number>;
-}
-
 ExpandableSlider.defaultProps = {
   indicatorSize: 24,
   useHapticResponse: true,
@@ -274,19 +261,3 @@ ExpandableSlider.propTypes = {
 ExpandableSlider.displayName = 'ExpandableSlider';
 
 export default ExpandableSlider;
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: 94,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  track: {
-    backgroundColor: 'rgba(0, 0, 0, 0.14)',
-    borderRadius: 12,
-  },
-  thumb: {
-    backgroundColor: '#FFFFFF',
-  },
-});

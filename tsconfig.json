@@ -2,7 +2,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-expandable-slider": ["./src/index"]
+      "react-native-expandable-slider": [
+        "./src/index"
+      ],
+      "src/*": [
+        "./src/*"
+      ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -10,8 +15,10 @@
     "importsNotUsedAsValues": "error",
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["esnext"],
-    "module": "esnext",
+    "lib": [
+      "ESNext"
+    ],
+    "module": "ESNext",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
@@ -22,6 +29,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": false,
-    "target": "esnext"
+    "target": "ESNext"
   }
 }
