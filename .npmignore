@@ -3,7 +3,6 @@
 example
 node_modules
 scripts
-src
 .editorconfig
 .gitattributes
 .gitignore
