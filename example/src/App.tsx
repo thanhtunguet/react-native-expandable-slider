@@ -40,7 +40,7 @@ export default function App() {
         <Text>Set Value</Text>
       </Button>
 
-      <Text>{value}</Text>
+      <Text>{Math.round(value)}</Text>
     </View>
   );
 }
@@ -52,6 +52,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 94,
     borderRadius: 12,
+    marginLeft: 16,
+    marginRight: 16,
   },
   gradientContainer: {
     width: '100%',

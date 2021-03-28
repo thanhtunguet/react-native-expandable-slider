@@ -21,4 +21,8 @@ export interface ExpandableSliderProps {
   onSlide?: OnSliderChange;
 
   onSlideCompleted?: OnSliderChange;
+
+  slidingVelocity?: number;
+
+  heightAnimatedDuration?: number;
 }

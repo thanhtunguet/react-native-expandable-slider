@@ -10,23 +10,22 @@ import type {
 import { PanResponder, StyleSheet } from 'react-native';
 import Animated, {
   Easing,
-  spring,
   sub,
   timing,
   useValue,
   Value,
 } from 'react-native-reanimated';
-import { styles } from 'src/ExpandableSlider.styles';
-import type { ExpandableSliderProps } from 'src/ExpandableSliderProps';
-import { triggerHapticFeedback } from 'src/helpers/trigger-haptic-feedback';
+import { styles } from './ExpandableSlider.styles';
+import type { ExpandableSliderProps } from './ExpandableSliderProps';
+import { triggerHapticFeedback } from './helpers/trigger-haptic-feedback';
 import type {
   LayoutReducerAction,
   LayoutReducerState,
-} from 'src/reducers/layout-reducer';
+} from './reducers/layout-reducer';
 import {
   layoutReducer,
   LayoutReducerActionType,
-} from 'src/reducers/layout-reducer';
+} from './reducers/layout-reducer';
 
 /**
  * File: ExpandableSlider.tsx
@@ -47,10 +46,12 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
     heightRef,
     onSlide,
     onSlideCompleted,
+    slidingVelocity,
+    heightAnimatedDuration,
   } = props;
 
   if (value < min || value > max) {
-    throw new Error('Invalid value');
+    console.warn(new Error('Invalid value'));
   }
 
   const sliderRange: number = React.useMemo(() => max - min, [max, min]);
@@ -86,25 +87,21 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
       timing(animatedHeight, {
         toValue: new Value(v),
         easing: Easing.ease,
-        duration: 50,
+        duration: heightAnimatedDuration,
       }).start();
     },
-    [animatedHeight]
+    [animatedHeight, heightAnimatedDuration]
   );
 
   React.useEffect(() => {
     if (layoutWidth > 0 && max > min) {
-      spring(animatedX, {
-        toValue: new Value(
-          ((value - min) / sliderRange) * slideableWidthRef.current +
-            borderRadius
-        ),
-        damping: 7,
-        mass: 1,
-        stiffness: 121.6,
-        overshootClamping: false,
-        restSpeedThreshold: 0.001,
-        restDisplacementThreshold: 0.001,
+      const v: number =
+        ((value - min) / sliderRange) * slideableWidthRef.current +
+        borderRadius;
+      timing(animatedX, {
+        toValue: new Value<number>(v),
+        easing: Easing.ease,
+        duration: v / slidingVelocity,
       }).start();
     }
   }, [
@@ -116,6 +113,8 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
     value,
     layoutWidth,
     layoutX,
+    animatedHeight,
+    slidingVelocity,
   ]);
 
   const handleLayout: ViewProps['onLayout'] = React.useCallback(
@@ -245,6 +244,8 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
 
 ExpandableSlider.defaultProps = {
   indicatorSize: 24,
+  slidingVelocity: 1.2,
+  heightAnimatedDuration: 50,
   useHapticResponse: true,
 };
 
@@ -256,6 +257,8 @@ ExpandableSlider.propTypes = {
   value: PropTypes.number,
   onSlide: PropTypes.func,
   onSlideCompleted: PropTypes.func,
+  slidingVelocity: PropTypes.number,
+  heightAnimatedDuration: PropTypes.number,
 };
 
 ExpandableSlider.displayName = 'ExpandableSlider';
