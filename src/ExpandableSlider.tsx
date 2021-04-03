@@ -7,14 +7,7 @@ import type {
   PanResponderInstance,
   ViewProps,
 } from 'react-native';
-import { PanResponder, StyleSheet } from 'react-native';
-import Animated, {
-  Easing,
-  sub,
-  timing,
-  useValue,
-  Value,
-} from 'react-native-reanimated';
+import { Animated, PanResponder, StyleSheet } from 'react-native';
 import { styles } from './ExpandableSlider.styles';
 import type { ExpandableSliderProps } from './ExpandableSliderProps';
 import { triggerHapticFeedback } from './helpers/trigger-haptic-feedback';
@@ -26,6 +19,8 @@ import {
   layoutReducer,
   LayoutReducerActionType,
 } from './reducers/layout-reducer';
+
+const useNativeDriver: boolean = false;
 
 /**
  * File: ExpandableSlider.tsx
@@ -78,16 +73,20 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
 
   const slideableWidthRef: MutableRefObject<number> = React.useRef<number>(0);
 
-  const animatedX: Value<number> = useValue<number>(borderRadius);
+  const animatedX: Animated.Value = React.useRef<Animated.Value>(
+    new Animated.Value(borderRadius)
+  ).current;
 
-  const animatedHeight: Value<number> = useValue<number>(indicatorSize);
+  const animatedHeight: Animated.Value = React.useRef<Animated.Value>(
+    new Animated.Value(indicatorSize)
+  ).current;
 
   const handleAnimatedHeight = React.useCallback(
     (v: number) => {
-      timing(animatedHeight, {
-        toValue: new Value(v),
-        easing: Easing.ease,
+      Animated.timing(animatedHeight, {
+        toValue: v,
         duration: heightAnimatedDuration,
+        useNativeDriver,
       }).start();
     },
     [animatedHeight, heightAnimatedDuration]
@@ -98,10 +97,10 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
       const v: number =
         ((value - min) / sliderRange) * slideableWidthRef.current +
         borderRadius;
-      timing(animatedX, {
-        toValue: new Value<number>(v),
-        easing: Easing.ease,
+      Animated.timing(animatedX, {
+        toValue: v,
         duration: v / slidingVelocity,
+        useNativeDriver,
       }).start();
     }
   }, [
@@ -231,7 +230,7 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
               borderRadius,
               transform: [
                 {
-                  translateX: sub(animatedX, borderRadius),
+                  translateX: Animated.subtract(animatedX, borderRadius),
                 },
               ],
             },
