@@ -45,6 +45,10 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
     heightAnimatedDuration,
   } = props;
 
+  if (min >= max) {
+    console.error(new Error('Invalid value range'));
+  }
+
   if (value < min || value > max) {
     console.warn(new Error('Invalid value'));
   }
