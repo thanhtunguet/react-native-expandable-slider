@@ -7,10 +7,17 @@ import type {
   PanResponderInstance,
   ViewProps,
 } from 'react-native';
-import { Animated, PanResponder, StyleSheet } from 'react-native';
+import { PanResponder, StyleSheet } from 'react-native';
 import { styles } from './ExpandableSlider.styles';
 import type { ExpandableSliderProps } from './ExpandableSliderProps';
 import { triggerHapticFeedback } from './helpers/trigger-haptic-feedback';
+import Animated, {
+  Easing,
+  sub,
+  timing,
+  useValue,
+  Value,
+} from 'react-native-reanimated';
 import type {
   LayoutReducerAction,
   LayoutReducerState,
@@ -19,8 +26,7 @@ import {
   layoutReducer,
   LayoutReducerActionType,
 } from './reducers/layout-reducer';
-
-const useNativeDriver: boolean = false;
+import LinearGradient from 'react-native-linear-gradient';
 
 /**
  * File: ExpandableSlider.tsx
@@ -77,20 +83,16 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
 
   const slideableWidthRef: MutableRefObject<number> = React.useRef<number>(0);
 
-  const animatedX: Animated.Value = React.useRef<Animated.Value>(
-    new Animated.Value(borderRadius)
-  ).current;
+  const animatedX: Value<number> = useValue<number>(borderRadius);
 
-  const animatedHeight: Animated.Value = React.useRef<Animated.Value>(
-    new Animated.Value(indicatorSize)
-  ).current;
+  const animatedHeight: Value<number> = useValue<number>(indicatorSize);
 
   const handleAnimatedHeight = React.useCallback(
     (v: number) => {
-      Animated.timing(animatedHeight, {
-        toValue: v,
+      timing(animatedHeight, {
+        toValue: new Value(v),
+        easing: Easing.ease,
         duration: heightAnimatedDuration,
-        useNativeDriver,
       }).start();
     },
     [animatedHeight, heightAnimatedDuration]
@@ -101,10 +103,10 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
       const v: number =
         ((value - min) / sliderRange) * slideableWidthRef.current +
         borderRadius;
-      Animated.timing(animatedX, {
+      timing(animatedX, {
         toValue: v,
         duration: v / slidingVelocity,
-        useNativeDriver,
+        easing: Easing.ease,
       }).start();
     }
   }, [
@@ -137,7 +139,9 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
 
   const handleSetAnimatedValue = React.useCallback(
     (v: number) => {
-      animatedX.setValue(v);
+      if (typeof v === 'number' && !Number.isNaN(v)) {
+        animatedX.setValue(v);
+      }
     },
     [animatedX]
   );
@@ -227,6 +231,27 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
       >
         <Animated.View
           style={[
+            styles.activeTrack,
+            {
+              borderTopLeftRadius: borderRadius,
+              borderBottomLeftRadius: borderRadius,
+              width: animatedX,
+            },
+          ]}
+        >
+          <LinearGradient
+            style={[styles.activeGradient]}
+            colors={[
+              'rgba(255, 255, 255, 0.95)',
+              'rgba(255, 255, 255, 0.0001)',
+            ]}
+            locations={[0, 1]}
+            useAngle={true}
+            angle={270}
+          />
+        </Animated.View>
+        <Animated.View
+          style={[
             styles.thumb,
             {
               width: indicatorSize,
@@ -234,7 +259,7 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
               borderRadius,
               transform: [
                 {
-                  translateX: Animated.subtract(animatedX, borderRadius),
+                  translateX: sub(animatedX, borderRadius),
                 },
               ],
             },
