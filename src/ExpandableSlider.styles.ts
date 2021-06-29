@@ -11,4 +11,14 @@ export const styles = StyleSheet.create({
   thumb: {
     backgroundColor: '#FFFFFF',
   },
+  activeTrack: {
+    height: '100%',
+    position: 'absolute',
+    zIndex: 2,
+    overflow: 'hidden',
+  },
+  activeGradient: {
+    width: '100%',
+    height: '100%',
+  },
 });

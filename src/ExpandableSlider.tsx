@@ -8,6 +8,7 @@ import type {
   ViewProps,
 } from 'react-native';
 import { Animated, PanResponder, StyleSheet } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { styles } from './ExpandableSlider.styles';
 import type { ExpandableSliderProps } from './ExpandableSliderProps';
 import { triggerHapticFeedback } from './helpers/trigger-haptic-feedback';
@@ -145,7 +146,7 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
   const handleResponderEvent = React.useCallback(
     (event: GestureResponderEvent, isCompleted: boolean = false) => {
       const { pageX } = event.nativeEvent;
-      let locationX: number = pageX - xRef.current;
+      let locationX: number = pageX - xRef.current - borderRadius;
       if (locationX <= borderRadius) {
         locationX = borderRadius;
       }
@@ -225,6 +226,27 @@ const ExpandableSlider: FC<ExpandableSliderProps> = (
           },
         ]}
       >
+        <Animated.View
+          style={[
+            styles.activeTrack,
+            {
+              borderTopLeftRadius: borderRadius,
+              borderBottomLeftRadius: borderRadius,
+              width: animatedX,
+            },
+          ]}
+        >
+          <LinearGradient
+            style={[styles.activeGradient]}
+            colors={[
+              'rgba(255, 255, 255, 0.95)',
+              'rgba(255, 255, 255, 0.0001)',
+            ]}
+            locations={[0, 1]}
+            useAngle={true}
+            angle={270}
+          />
+        </Animated.View>
         <Animated.View
           style={[
             styles.thumb,
