@@ -2,7 +2,10 @@
 
 _Phillips Hue dimming slider_
 
+![screenshot](https://im.ge/i/uQh80)
+
 ## Installation
+
 ```sh
 npm install react-native-expandable-slider
 ```
@@ -17,18 +20,19 @@ import ExpandableSlider from 'react-native-expandable-slider';
 function Example() {
   return (
     <ExpandableSlider
-      min = { 800 }
-      max = { 20000 }
-      value = { value }
-      onSlide = { handleValueChange }
-      heightRef = { heightRef }
-      style = { styles.slider }
+      min={800}
+      max={20000}
+      value={value}
+      onSlide={handleValueChange}
+      heightRef={heightRef}
+      style={styles.slider}
     />
   );
 }
 ```
 
 ### Props
+
 ```tsx
 interface ExpandableSliderProps {
   /**
@@ -106,7 +110,9 @@ interface ExpandableSliderProps {
 ```
 
 ## Contributing
+
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
 ## License
+
 MIT
