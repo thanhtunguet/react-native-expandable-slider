@@ -14,6 +14,10 @@ npm install react-native-expandable-slider
 
 View [Online Demo](https://snack.expo.io/@thanhtunguet/react-native-expandable-slider) Snack
 
+If you place this component inside ScrollView, please set `canCancelContentTouches={false}` for ScrollView container
+
+See [https://stackoverflow.com/questions/51705343/react-native-using-a-panresponder-inside-of-a-scrollview-broken-on-android](https://stackoverflow.com/questions/51705343/react-native-using-a-panresponder-inside-of-a-scrollview-broken-on-android)
+
 ```tsx
 import ExpandableSlider from 'react-native-expandable-slider';
 

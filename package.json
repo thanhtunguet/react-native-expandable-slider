@@ -1,6 +1,6 @@
 {
   "name": "react-native-expandable-slider",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Expandable slider for React Native",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
